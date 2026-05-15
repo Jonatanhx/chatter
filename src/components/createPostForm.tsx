@@ -29,7 +29,7 @@ export function CreatePostForm({ user }: { user: User }) {
         placeholder="What's on your mind?"
         {...form.getInputProps("content")}
       />
-      <Button>Create</Button>
+      <Button type="submit">Create</Button>
     </form>
   );
 }
