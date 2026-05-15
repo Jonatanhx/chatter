@@ -1,0 +1,13 @@
+.postCard {
+  background: #424242;
+  border: 1px solid #666666;
+  padding: 20px;
+}
+.postCardCloseBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 22px;
+  padding: 16px;
+}
+.postCardContent {
+}
