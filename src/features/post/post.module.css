@@ -1,6 +1,6 @@
 .postCard {
-  background: #424242;
-  border: 1px solid #666666;
+  background: var(--mantine-color-dark-4);
+  border: 1px solid var(--mantine-color-dark-3);
   padding: 20px;
 }
 .postCardCloseBtn {

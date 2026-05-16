@@ -6,8 +6,11 @@ export const SignInSchema = z.object({
   password: z.string(),
 });
 
+export const RegisterUserSchema = z.object({});
+
 export type SignInFormInputs = z.infer<typeof SignInSchema>;
+export type RegisterUserFormInputs = Pick<User, "name" | "email" | "password">;
 
 export type SessionData = {
-  user?: Pick<User, "id" | "email">;
+  user?: User;
 };

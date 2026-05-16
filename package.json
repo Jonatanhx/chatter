@@ -22,6 +22,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/react-fontawesome": "^3.3.1",
     "@mantine/core": "^9.2.1",
     "@mantine/form": "^9.2.1",
     "@mantine/hooks": "^9.2.1",
@@ -32,6 +34,7 @@
     "@trpc/next": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
+    "argon2": "^0.44.0",
     "iron-session": "^8.0.4",
     "next": "^15.2.3",
     "react": "^19.0.0",
@@ -41,6 +44,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

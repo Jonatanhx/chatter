@@ -6,7 +6,7 @@ import classes from "./form.module.css";
 
 export function SignInForm() {
   const utils = api.useUtils();
-  const signIn = api.user.verifyCredentials.useMutation({
+  const signIn = api.auth.signIn.useMutation({
     onSuccess: () => void utils.auth.getSession.invalidate(),
   });
   const form = useForm<SignInFormInputs>({
