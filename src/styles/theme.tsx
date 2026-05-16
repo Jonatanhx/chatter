@@ -1,4 +1,5 @@
-import { createTheme, type MantineColorsTuple } from "@mantine/core";
+import { Button, createTheme, type MantineColorsTuple } from "@mantine/core";
+import classes from "./theme.module.css";
 
 const brandColor: MantineColorsTuple = [
   "#eef3ff",
@@ -23,10 +24,13 @@ export const theme = createTheme({
   black: "#141414",
   white: "#e8e8e8",
   components: {
-    Button: {
-      defaultProps: {
-        variant: "filled",
+    Button: Button.extend({
+      classNames: (_, props) => {
+        if (props.variant === "icon") return { root: classes.iconButton };
+        if (props.variant === "iconTransparent")
+          return { root: classes.iconButtonTransparent };
+        return {};
       },
-    },
+    }),
   },
 });

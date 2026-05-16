@@ -1,16 +1,12 @@
-import { CreatePostForm } from "~/components/createPostForm";
+import { Stack } from "@mantine/core";
+import { CreatePostForm } from "~/features/post/createPostForm";
 import { PostFeed } from "~/features/post/postFeed";
-import { api } from "~/utils/api";
 
 export default function Home() {
-  const { data: user } = api.user.getUserByEmail.useQuery({
-    email: "admin@admin.com",
-  });
-
   return (
-    <>
-      {user && <CreatePostForm user={user} />}
+    <Stack pt={20} w={500} style={{ placeSelf: "center" }}>
+      <CreatePostForm />
       <PostFeed />
-    </>
+    </Stack>
   );
 }

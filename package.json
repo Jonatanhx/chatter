@@ -34,12 +34,14 @@
     "@trpc/next": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
+    "@uploadthing/react": "^7.3.3",
     "argon2": "^0.44.0",
     "iron-session": "^8.0.4",
     "next": "^15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "superjson": "^2.2.1",
+    "uploadthing": "^7.7.4",
     "zod": "^3.24.2"
   },
   "devDependencies": {
