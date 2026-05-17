@@ -25,6 +25,8 @@ type Post = NonNullable<RouterOutputs["post"]["getLatest"]>;
 export function Post({ post }: { post: Post }) {
   const utils = api.useUtils();
 
+  const { data: session } = api.auth.getSession.useQuery();
+  if (!session) return null;
   const { data: user } = api.user.getUserById.useQuery({ id: post.userId });
   const deletePost = api.post.delete.useMutation({
     onSuccess: () => void utils.post.getAll.invalidate(),
@@ -72,13 +74,15 @@ export function Post({ post }: { post: Post }) {
             >
               Share post
             </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item
-              onClick={handleDeletePost}
-              leftSection={<FontAwesomeIcon icon={faTrashCan} size="sm" />}
-            >
-              Delete post
-            </Menu.Item>
+            {post.userId === session.id && <Menu.Divider />}
+            {post.userId === session.id && (
+              <Menu.Item
+                onClick={handleDeletePost}
+                leftSection={<FontAwesomeIcon icon={faTrashCan} size="sm" />}
+              >
+                Delete post
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
         </Menu>
       </Group>

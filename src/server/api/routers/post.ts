@@ -7,7 +7,7 @@ export const postRouter = createTRPCRouter({
     .input(
       z.object({
         content: z.string().min(1),
-        image: z.string().optional(),
+        image: z.string().nullable(),
         userId: z.string(),
       }),
     )

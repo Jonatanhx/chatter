@@ -18,7 +18,13 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "utfs.io" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "**.ufs.sh" },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
+    ],
   },
 };
 

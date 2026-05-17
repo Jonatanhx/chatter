@@ -54,7 +54,7 @@ export const authRouter = createTRPCRouter({
         code: "UNAUTHORIZED",
       });
     else {
-      return session.user;
+      return session.user ?? null;
     }
   }),
 });

@@ -14,29 +14,36 @@ import { useState } from "react";
 import z from "zod";
 import { api } from "~/utils/api";
 import { useUploadThing } from "~/utils/uploadthing";
+import type { Post } from "../../../generated/prisma";
 import classes from "./createPostForm.module.css";
 
-const CreatePostFormSchema = z.object({
-  content: z.string().min(2),
-  image: z.string().optional(),
-});
+const CreatePostFormSchema: z.ZodType<Pick<Post, "content" | "image">> =
+  z.object({
+    content: z.string().min(2),
+    image: z.string().nullable(),
+  });
 
 type CreatePostFormInputs = z.infer<typeof CreatePostFormSchema>;
 
 export function CreatePostForm() {
-  const { data: user } = api.user.getUserByEmail.useQuery({
-    email: "admin@admin.com",
-  });
+  const { data: user } = api.auth.getSession.useQuery();
+
   const utils = api.useUtils();
   const createPost = api.post.create.useMutation({
     onSuccess: () => {
       form.reset();
+      setFile(null);
+      setPreview(null);
       void utils.post.getAll.invalidate();
     },
   });
   const form = useForm<CreatePostFormInputs>({
     mode: "uncontrolled",
     validate: schemaResolver(CreatePostFormSchema, { sync: true }),
+    initialValues: {
+      content: "",
+      image: null,
+    },
   });
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -49,15 +56,15 @@ export function CreatePostForm() {
 
   async function handleSubmit(values: CreatePostFormInputs) {
     if (!user) return;
-    let imageUrl: string | undefined;
+    let imageUrl: string | null = null;
     if (file) {
       const res = await startUpload([file]);
-      imageUrl = res?.[0]?.url;
+      imageUrl = res?.[0]?.ufsUrl ?? null;
     }
     createPost.mutate({
       content: values.content,
       userId: user.id,
-      ...(imageUrl && { image: imageUrl }),
+      image: imageUrl,
     });
   }
 
@@ -76,6 +83,7 @@ export function CreatePostForm() {
         />
         <Stack gap={16} flex={1}>
           <Textarea
+            key={form.key("content")}
             size="md"
             placeholder="What's on your mind?"
             {...form.getInputProps("content")}
