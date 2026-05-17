@@ -15,6 +15,9 @@ async function main() {
       email: "admin@admin.com",
       name: "admin",
       password: hashedPassword,
+      role: "ADMIN",
+      image:
+        "https://27q402fisv.ufs.sh/f/adAHYXOu7PAtecYlguTnkrBSJw8N0scQbL51u4gpYfaIetzP",
     },
   });
 

@@ -5,4 +5,11 @@
   background: var(--mantine-color-dark-4);
   border: 1px solid var(--mantine-color-dark-3);
   padding: 20px;
+  min-width: 400px;
+}
+.signInButton {
+  background-color: var(--mantine-color-brand-5);
+  &:hover {
+    background-color: var(--mantine-color-brand-4);
+  }
 }

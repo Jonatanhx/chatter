@@ -1,8 +1,7 @@
 import { AppShell, ScrollArea } from "@mantine/core";
 import type React from "react";
 import { api } from "~/utils/api";
-import { RegisterUserForm } from "../auth/registerUserForm";
-import { SignInForm } from "../auth/signInForm";
+import AuthForms from "../auth/authForms";
 import { Header } from "./header";
 import classes from "./layout.module.css";
 
@@ -39,8 +38,7 @@ function AuthedLayout({ children }: { children: React.ReactNode }) {
 function UnauthedLayout() {
   return (
     <main className={classes.unauthedLayout}>
-      <SignInForm />
-      <RegisterUserForm />
+      <AuthForms />
     </main>
   );
 }
