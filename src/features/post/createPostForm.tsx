@@ -81,7 +81,7 @@ export function CreatePostForm() {
             {...form.getInputProps("content")}
           />
           {preview && file && (
-            <Group pos={"relative"}>
+            <Group w={"fit-content"} pos={"relative"}>
               <Button
                 onClick={() => setPreview(null)}
                 className={classes.removePreviewButton}

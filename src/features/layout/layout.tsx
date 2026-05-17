@@ -1,13 +1,15 @@
 import { AppShell, ScrollArea } from "@mantine/core";
 import type React from "react";
 import { api } from "~/utils/api";
-import { SignInForm } from "../../components/signInForm";
+import { SignInForm } from "../auth/signInForm";
 import { Header } from "./header";
 import classes from "./layout.module.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { data: session } = api.auth.getSession.useQuery();
+  const { data: session, isLoading } = api.auth.getSession.useQuery();
   const isAuthed = !!session;
+
+  if (isLoading) return null;
 
   return isAuthed ? (
     <AuthedLayout>{children}</AuthedLayout>
@@ -19,8 +21,8 @@ function AuthedLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 400, breakpoint: 0 }}
-      aside={{ width: 400, breakpoint: 0 }}
+      navbar={{ width: 400, breakpoint: "sm", collapsed: { mobile: true } }}
+      aside={{ width: 400, breakpoint: "sm", collapsed: { mobile: true } }}
     >
       <Header />
       <AppShell.Navbar>

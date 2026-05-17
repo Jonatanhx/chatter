@@ -4,7 +4,7 @@ import { PostFeed } from "~/features/post/postFeed";
 
 export default function Home() {
   return (
-    <Stack pt={20} w={500} style={{ placeSelf: "center" }}>
+    <Stack gap={0} w={"100%"} style={{ placeSelf: "center" }}>
       <CreatePostForm />
       <PostFeed />
     </Stack>

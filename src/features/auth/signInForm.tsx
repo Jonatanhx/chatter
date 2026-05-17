@@ -1,8 +1,8 @@
-import { Button, TextInput } from "@mantine/core";
+import { Button, Divider, Text, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
 import { SignInSchema, type SignInFormInputs } from "~/schemas/authSchemas";
 import { api } from "~/utils/api";
-import classes from "./form.module.css";
+import classes from "./signInForm.module.css";
 
 export function SignInForm() {
   const utils = api.useUtils();
@@ -19,19 +19,24 @@ export function SignInForm() {
       onSubmit={form.onSubmit((values) => signIn.mutate(values))}
     >
       <TextInput
-        withAsterisk
         label="Email"
         placeholder="example@email.com"
         {...form.getInputProps("email")}
       />
       <TextInput
-        withAsterisk
         type="password"
         label="Password"
         placeholder="**********"
         {...form.getInputProps("password")}
       />
-      <Button type="submit">Sign in</Button>
+      <Button type="submit" className={classes.signInButton}>
+        Sign in
+      </Button>
+      <Divider />
+      <Text size="sm" c="var(--mantine-color-dark-1)">
+        Not part of the conversation yet?
+      </Text>
+      <Button>Register</Button>
     </form>
   );
 }
