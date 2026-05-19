@@ -1,8 +1,11 @@
 .post {
   background: var(--mantine-color-body);
   border-bottom: 1px solid var(--mantine-color-dark-4);
+  gap: 0px;
+  color: inherit;
+  text-decoration: none;
 
-  &:hover {
+  &[data-clickable="true"]:hover {
     background-color: var(--mantine-color-dark-6);
     cursor: pointer;
   }

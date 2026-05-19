@@ -5,8 +5,10 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AppShell, Avatar, Button, Menu } from "@mantine/core";
+import { AppShell, Avatar, Menu } from "@mantine/core";
 import Image from "next/image";
+import Link from "next/link";
+import { IconButton } from "~/components/iconButton";
 import { api } from "~/utils/api";
 import classes from "./header.module.css";
 export function Header() {
@@ -21,12 +23,14 @@ export function Header() {
 
   return (
     <AppShell.Header classNames={{ header: classes.header }}>
-      <Image
-        alt="Chatter logo"
-        width={45}
-        height={45}
-        src={"./ChatterLogo.svg"}
-      />
+      <Link href="/">
+        <Image
+          src="/ChatterLogo.svg"
+          alt="Chatter logo"
+          width={45}
+          height={45}
+        />
+      </Link>
       <div className={classes.profileCard}>
         <Avatar
           bd={"1px solid gray"}
@@ -58,9 +62,7 @@ export function Header() {
             </Menu.Item>
           </Menu.Dropdown>
           <Menu.Target>
-            <Button variant="icon">
-              <FontAwesomeIcon icon={faEllipsis} color="white" />
-            </Button>
+            <IconButton icon={faEllipsis} />
           </Menu.Target>
         </Menu>
       </div>

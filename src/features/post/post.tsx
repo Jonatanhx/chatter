@@ -7,22 +7,15 @@ import {
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Avatar,
-  Button,
-  Divider,
-  Group,
-  Menu,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Avatar, Divider, Group, Menu, Stack, Text } from "@mantine/core";
 import Image from "next/image";
+import { IconButton } from "~/components/iconButton";
 import { api, type RouterOutputs } from "~/utils/api";
 import classes from "./post.module.css";
 
 type Post = NonNullable<RouterOutputs["post"]["getLatest"]>;
 
-export function Post({ post }: { post: Post }) {
+export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
   const utils = api.useUtils();
 
   const { data: session } = api.auth.getSession.useQuery();
@@ -55,7 +48,12 @@ export function Post({ post }: { post: Post }) {
   }
   if (!user) return null;
   return (
-    <Stack className={classes.post} gap={0}>
+    <Stack
+      onClick={onClick}
+      className={classes.post}
+      gap={0}
+      data-clickable={!!onClick}
+    >
       <Group justify="space-between" p={20}>
         <Group>
           <Avatar src={user.image}></Avatar>
@@ -64,9 +62,7 @@ export function Post({ post }: { post: Post }) {
         </Group>
         <Menu>
           <Menu.Target>
-            <Button variant="icon">
-              <FontAwesomeIcon icon={faEllipsis} />
-            </Button>
+            <IconButton icon={faEllipsis} />
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Item
@@ -98,15 +94,9 @@ export function Post({ post }: { post: Post }) {
       </Group>
       <Divider />
       <Group p={10}>
-        <Button variant="icon">
-          <FontAwesomeIcon icon={faComment} />
-        </Button>
-        <Button variant="icon">
-          <FontAwesomeIcon icon={faRetweet} />
-        </Button>
-        <Button variant="icon">
-          <FontAwesomeIcon icon={faHeart} />
-        </Button>
+        <IconButton icon={faComment} />
+        <IconButton icon={faRetweet} />
+        <IconButton icon={faHeart} />
       </Group>
     </Stack>
   );

@@ -30,6 +30,7 @@ function SignInForm({
   const utils = api.useUtils();
   const signIn = api.auth.signIn.useMutation({
     onSuccess: () => void utils.auth.getSession.invalidate(),
+    onError: () => form.setErrors({ root: "Invalid Credentials" }),
   });
   const form = useForm<SignInFormInputs>({
     mode: "uncontrolled",
@@ -51,6 +52,11 @@ function SignInForm({
         placeholder="**********"
         {...form.getInputProps("password")}
       />
+      {form.errors.root && (
+        <Text c="red" size="sm">
+          {form.errors.root}
+        </Text>
+      )}
       <Button type="submit" className={classes.signInButton}>
         Sign in
       </Button>
