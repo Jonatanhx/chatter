@@ -1,23 +1,74 @@
-import { Button, createTheme, type MantineColorsTuple } from "@mantine/core";
+import {
+  Button,
+  createTheme,
+  defaultVariantColorsResolver,
+  parseThemeColor,
+  type MantineColorsTuple,
+  type VariantColorsResolver,
+} from "@mantine/core";
 import classes from "./theme.module.css";
 
 const brandColor: MantineColorsTuple = [
-  "#eef3ff",
-  "#dce4f5",
-  "#b9c7e2",
-  "#94a8d0",
-  "#748dc1",
-  "#5f7cb8",
-  "#5474b4",
-  "#44639f",
-  "#39588f",
-  "#2d4b81",
+  "#f6eeff",
+  "#e7d9f7",
+  "#cab1ea",
+  "#ad86dd",
+  "#9462d2",
+  "#854bcb",
+  "#7d3fc9",
+  "#6b31b2",
+  "#5f2ba0",
+  "#52238d",
+];
+const neutralColor: MantineColorsTuple = [
+  "#f5f5f5",
+  "#e7e7e7",
+  "#cdcdcd",
+  "#b2b2b2",
+  "#9a9a9a",
+  "#8b8b8b",
+  "#848484",
+  "#717171",
+  "#656565",
+  "#242424",
 ];
 
+const variantColorResolver: VariantColorsResolver = (input) => {
+  const defaultResolvedColors = defaultVariantColorsResolver(input);
+
+  if (input.variant === "filled") {
+    const parsed = parseThemeColor({ color: input.color, theme: input.theme });
+    const colorName = parsed.color;
+    const shadeIndex = parsed.shade ?? 6;
+    const colors = input.theme.colors[colorName];
+
+    if (colors) {
+      const hoverShade = Math.min(Number(shadeIndex) + 1, 9);
+      return {
+        ...defaultResolvedColors,
+        hover: colors[hoverShade]!,
+      };
+    }
+  }
+
+  return defaultResolvedColors;
+};
+
 export const theme = createTheme({
+  variantColorResolver,
   primaryColor: "brand",
   colors: {
     brand: brandColor,
+    neutral: neutralColor,
+  },
+  spacing: {
+    xs: "4px",
+    sm: "8px",
+    md: "16px",
+    lg: "24px",
+    "2xl": "48px",
+    "3xl": "64px",
+    "4xl": "96px",
   },
   fontFamily: "Inter, sans-serif",
   defaultRadius: "md",

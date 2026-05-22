@@ -1,8 +1,5 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Divider, Group, Text, TextInput } from "@mantine/core";
+import { Button, Divider, Stack, Text, TextInput } from "@mantine/core";
 import { schemaResolver, useForm } from "@mantine/form";
-import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   SignInSchema,
   type RegisterFormInputs,
@@ -11,22 +8,7 @@ import {
 import { api } from "~/utils/api";
 import classes from "./authForms.module.css";
 
-export default function AuthForms() {
-  const [activeForm, setActiveForm] = useState<"SIGNIN" | "REGISTER">("SIGNIN");
-  return (
-    <>
-      {activeForm === "SIGNIN" && <SignInForm setActiveForm={setActiveForm} />}
-      {activeForm === "REGISTER" && (
-        <RegisterForm setActiveForm={setActiveForm} />
-      )}
-    </>
-  );
-}
-function SignInForm({
-  setActiveForm,
-}: {
-  setActiveForm: Dispatch<SetStateAction<"SIGNIN" | "REGISTER">>;
-}) {
+export function SignInForm() {
   const utils = api.useUtils();
   const signIn = api.auth.signIn.useMutation({
     onSuccess: () => void utils.auth.getSession.invalidate(),
@@ -41,22 +23,28 @@ function SignInForm({
       className={classes.formContainer}
       onSubmit={form.onSubmit((values) => signIn.mutate(values))}
     >
-      <TextInput
-        label="Email"
-        placeholder="example@email.com"
-        {...form.getInputProps("email")}
-      />
-      <TextInput
-        type="password"
-        label="Password"
-        placeholder="**********"
-        {...form.getInputProps("password")}
-      />
-      {form.errors.root && (
-        <Text c="red" size="sm">
-          {form.errors.root}
+      <Text size="lg" fw={"500"}>
+        Sign in
+      </Text>
+      <Stack gap={4}>
+        <Text size="sm" c="neutral.3">
+          Account
         </Text>
-      )}
+        <TextInput
+          placeholder="example@email.com"
+          {...form.getInputProps("email")}
+        />
+        <TextInput
+          type="password"
+          placeholder="Password"
+          {...form.getInputProps("password")}
+        />
+        {form.errors.root && (
+          <Text c="red" size="sm">
+            {form.errors.root}
+          </Text>
+        )}
+      </Stack>
       <Button type="submit" className={classes.signInButton}>
         Sign in
       </Button>
@@ -64,16 +52,11 @@ function SignInForm({
       <Text size="sm" c="var(--mantine-color-dark-1)">
         Not part of the conversation yet?
       </Text>
-      <Button onClick={() => setActiveForm("REGISTER")}>Register</Button>
     </form>
   );
 }
 
-function RegisterForm({
-  setActiveForm,
-}: {
-  setActiveForm: Dispatch<SetStateAction<"SIGNIN" | "REGISTER">>;
-}) {
+export function RegisterForm() {
   const utils = api.useUtils();
   const register = api.user.registerUser.useMutation({
     onSuccess: () => void utils.auth.getSession.invalidate(),
@@ -87,16 +70,6 @@ function RegisterForm({
       className={classes.formContainer}
       onSubmit={form.onSubmit((values) => register.mutate(values))}
     >
-      <Group gap={0}>
-        <Button
-          variant="icon"
-          onClick={() => setActiveForm("SIGNIN")}
-          leftSection={<FontAwesomeIcon icon={faArrowLeft} />}
-        />
-        <Text size="lg" fw={"500"}>
-          Register
-        </Text>
-      </Group>
       <TextInput
         label="Name"
         placeholder="John Doe"
