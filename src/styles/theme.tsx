@@ -2,6 +2,7 @@ import {
   Button,
   createTheme,
   defaultVariantColorsResolver,
+  Modal,
   parseThemeColor,
   type MantineColorsTuple,
   type VariantColorsResolver,
@@ -81,6 +82,20 @@ export const theme = createTheme({
         if (props.variant === "iconTransparent")
           return { root: classes.iconButtonTransparent };
         return {};
+      },
+    }),
+    Modal: Modal.extend({
+      styles: {
+        header: {
+          padding: "20px",
+          borderBottom: "1px solid var(--mantine-color-neutral-8)",
+        },
+        content: {
+          border: "1px solid var(--mantine-color-neutral-8)",
+        },
+        body: {
+          padding: "0px",
+        },
       },
     }),
   },

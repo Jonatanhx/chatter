@@ -7,15 +7,28 @@ import {
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Divider, Group, Menu, Stack, Text } from "@mantine/core";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Group,
+  Menu,
+  Modal,
+  Stack,
+  Text,
+  Textarea,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
 import { IconButton } from "~/components/iconButton";
 import { api, type RouterOutputs } from "~/utils/api";
+import { formatCreatedAtDate } from "~/utils/helpers";
 import classes from "./post.module.css";
 
 type Post = NonNullable<RouterOutputs["post"]["getLatest"]>;
 
 export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
+  const [opened, { open, close }] = useDisclosure(false);
   const utils = api.useUtils();
 
   const { data: session } = api.auth.getSession.useQuery();
@@ -29,23 +42,6 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
     deletePost.mutate({ postId: post.id });
   }
 
-  function formatCreatedAtDate(createdAt: Date): string {
-    const seconds = Math.floor(
-      (new Date().getTime() - createdAt.getTime()) / 1000,
-    );
-
-    if (seconds < 60) return "Just now";
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days} day${days !== 1 ? "s" : ""} ago`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months} month${months !== 1 ? "s" : ""} ago`;
-    const years = Math.floor(months / 12);
-    return `${years} year${years !== 1 ? "s" : ""} ago`;
-  }
   if (!user) return null;
   return (
     <Stack
@@ -94,10 +90,36 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
       </Group>
       <Divider />
       <Group p={10}>
-        <IconButton icon={faComment} />
+        <IconButton onClick={open} icon={faComment} />
         <IconButton icon={faRetweet} />
         <IconButton icon={faHeart} />
       </Group>
+      <Modal
+        size="lg"
+        onClick={(e) => e.stopPropagation()}
+        opened={opened}
+        onClose={close}
+        title="Comment"
+      >
+        <Group wrap="nowrap" align="flex-start" p="lg">
+          <Avatar src={user.image}></Avatar>
+          <Stack gap={0}>
+            <Text c="neutral.1" fw={600}>
+              {user.name ? user.name : user.email}
+            </Text>
+            <Text>{post.content}</Text>
+          </Stack>
+        </Group>
+        <Stack
+          flex={1}
+          p="lg"
+          align="flex-end"
+          style={{ borderTop: "1px solid var(--mantine-color-neutral-8)" }}
+        >
+          <Textarea w="100%" />
+          <Button>Submit</Button>
+        </Stack>
+      </Modal>
     </Stack>
   );
 }
