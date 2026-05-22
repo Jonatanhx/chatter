@@ -1,18 +1,22 @@
 .iconButton {
   position: relative;
-  padding: 0px;
+  padding: 0;
   width: 34px;
   height: 34px;
-  border-radius: 32px;
+  border-radius: 50%;
   background-color: inherit;
   transition: background-color 0.2s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &:hover {
     background-color: var(--mantine-color-dark-3);
   }
-  & > span {
-    position: absolute;
-    top: 2%;
-    left: 22%;
+
+  & [data-button-inner] {
+    padding: 0;
   }
 }
 .iconButtonTransparent {

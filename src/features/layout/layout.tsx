@@ -52,9 +52,9 @@ function UnauthedLayout() {
     "START",
   );
   return (
-    <Stack className={classes.unauthedLayout} gap="3xl">
+    <main className={classes.unauthedLayout}>
       {activeView === "START" && (
-        <>
+        <Stack gap="3xl">
           <Stack align="center" gap="xl">
             <Image
               src="/ChatterLogo.svg"
@@ -75,51 +75,45 @@ function UnauthedLayout() {
             <Button
               bdrs="xl"
               color="brand.4"
-              w={"100%"}
+              size="md"
+              w="100%"
               onClick={() => setActiveView("SIGNIN")}
             >
               Sign in
             </Button>
             <Button
               bdrs="xl"
-              w={"100%"}
+              size="md"
               onClick={() => setActiveView("REGISTER")}
             >
               Register
             </Button>
           </Stack>
-        </>
+        </Stack>
       )}
+
       {activeView === "SIGNIN" && (
-        <Stack>
-          <Group gap={0}>
-            <Button
-              variant="icon"
-              onClick={() => setActiveView("START")}
-              leftSection={<FontAwesomeIcon icon={faArrowLeft} />}
-            />
-            <Text size="lg" fw={"500"}>
-              Sign in
-            </Text>
+        <Stack gap="lg">
+          <Group gap="sm">
+            <Button variant="icon" onClick={() => setActiveView("START")}>
+              <FontAwesomeIcon size="lg" icon={faArrowLeft} />
+            </Button>
+            <Title order={2}>Sign in</Title>
           </Group>
           <SignInForm />
         </Stack>
       )}
       {activeView === "REGISTER" && (
-        <Stack>
-          <Group gap={0}>
-            <Button
-              variant="icon"
-              onClick={() => setActiveView("START")}
-              leftSection={<FontAwesomeIcon icon={faArrowLeft} />}
-            />
-            <Text size="lg" fw={"500"}>
-              Register
-            </Text>
+        <Stack gap="lg">
+          <Group gap="sm">
+            <Button variant="icon" onClick={() => setActiveView("START")}>
+              <FontAwesomeIcon size="lg" icon={faArrowLeft} />
+            </Button>
+            <Title order={2}>Register</Title>
           </Group>
           <RegisterForm />
         </Stack>
       )}
-    </Stack>
+    </main>
   );
 }
