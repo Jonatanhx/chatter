@@ -1,14 +1,6 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  AppShell,
-  Button,
-  Group,
-  ScrollArea,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { AppShell, Button, Group, Stack, Text, Title } from "@mantine/core";
 import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
@@ -16,6 +8,7 @@ import { api } from "~/utils/api";
 import { RegisterForm, SignInForm } from "../auth/authForms";
 import { Header } from "./header";
 import classes from "./layout.module.css";
+import { Navbar } from "./navbar";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { data: session, isLoading } = api.auth.getSession.useQuery();
@@ -37,11 +30,7 @@ function AuthedLayout({ children }: { children: React.ReactNode }) {
       aside={{ width: 400, breakpoint: "sm", collapsed: { mobile: true } }}
     >
       <Header />
-      <AppShell.Navbar>
-        <AppShell.Section grow component={ScrollArea} p={20}>
-          hej2
-        </AppShell.Section>
-      </AppShell.Navbar>
+      <Navbar />
       <AppShell.Aside p={20}>hej</AppShell.Aside>
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>

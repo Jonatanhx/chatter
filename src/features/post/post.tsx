@@ -33,7 +33,7 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
 
   const { data: session } = api.auth.getSession.useQuery();
   if (!session) return null;
-  const { data: user } = api.user.getUserById.useQuery({ id: post.userId });
+  const { data: author } = api.user.getUserById.useQuery({ id: post.userId });
   const deletePost = api.post.delete.useMutation({
     onSuccess: () => void utils.post.getAll.invalidate(),
   });
@@ -42,7 +42,7 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
     deletePost.mutate({ postId: post.id });
   }
 
-  if (!user) return null;
+  if (!author) return null;
   return (
     <Stack
       onClick={onClick}
@@ -52,8 +52,8 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
     >
       <Group justify="space-between" p={20}>
         <Group>
-          <Avatar src={user.image}></Avatar>
-          <Text>{user.name ? user.name : user.email}</Text>
+          <Avatar src={author.image}></Avatar>
+          <Text>{author.name ? author.name : author.email}</Text>
           <Text>{formatCreatedAtDate(post.createdAt)}</Text>
         </Group>
         <Menu>
@@ -102,23 +102,33 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
         title="Comment"
       >
         <Group wrap="nowrap" align="flex-start" p="lg">
-          <Avatar src={user.image}></Avatar>
-          <Stack gap={0}>
+          <Avatar src={author.image} />
+          <Stack gap={6}>
             <Text c="neutral.1" fw={600}>
-              {user.name ? user.name : user.email}
+              {author.name ? author.name : author.email}
             </Text>
             <Text>{post.content}</Text>
+            {post.image && (
+              <Image
+                src={post.image}
+                alt={post.content}
+                height={200}
+                width={200}
+              />
+            )}
           </Stack>
         </Group>
-        <Stack
-          flex={1}
+        <Group
           p="lg"
-          align="flex-end"
+          align="flex-start"
           style={{ borderTop: "1px solid var(--mantine-color-neutral-8)" }}
         >
-          <Textarea w="100%" />
-          <Button>Submit</Button>
-        </Stack>
+          <Avatar src={session.image} />
+          <Stack flex={1} align="flex-end">
+            <Textarea placeholder="Write your reply" size="md" w="100%" />
+            <Button>Submit</Button>
+          </Stack>
+        </Group>
       </Modal>
     </Stack>
   );

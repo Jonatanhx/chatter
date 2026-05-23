@@ -3,6 +3,7 @@ import {
   createTheme,
   defaultVariantColorsResolver,
   Modal,
+  NavLink,
   parseThemeColor,
   type MantineColorsTuple,
   type VariantColorsResolver,
@@ -95,6 +96,14 @@ export const theme = createTheme({
         },
         body: {
           padding: "0px",
+        },
+      },
+    }),
+    NavLink: NavLink.extend({
+      styles: {
+        label: {
+          fontSize: "18px",
+          fontWeight: "500",
         },
       },
     }),
