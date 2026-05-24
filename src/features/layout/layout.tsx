@@ -6,6 +6,7 @@ import type React from "react";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { RegisterForm, SignInForm } from "../auth/authForms";
+import { Aside } from "./aside";
 import { Header } from "./header";
 import classes from "./layout.module.css";
 import { Navbar } from "./navbar";
@@ -25,14 +26,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 function AuthedLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
-      header={{ height: 60 }}
+      layout="alt"
+      header={{ height: 75 }}
       navbar={{ width: 400, breakpoint: "sm", collapsed: { mobile: true } }}
       aside={{ width: 400, breakpoint: "sm", collapsed: { mobile: true } }}
     >
       <Header />
       <Navbar />
-      <AppShell.Aside p={20}>hej</AppShell.Aside>
       <AppShell.Main>{children}</AppShell.Main>
+      <Aside />
     </AppShell>
   );
 }

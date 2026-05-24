@@ -13,8 +13,9 @@ export function Navbar() {
     <AppShell.Navbar>
       <Group>
         <Stack flex={1} />
-        <Stack w="fit-content" p={20}>
+        <Stack w="fit-content" p="xl">
           <NavLink
+            href="/"
             label="Home"
             leftSection={<FontAwesomeIcon icon={faHome} size="lg" />}
             rightSection={<FontAwesomeIcon icon={faChevronRight} />}

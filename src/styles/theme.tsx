@@ -101,6 +101,10 @@ export const theme = createTheme({
     }),
     NavLink: NavLink.extend({
       styles: {
+        root: {
+          borderRadius: "8px",
+          paddingInline: "16px",
+        },
         label: {
           fontSize: "18px",
           fontWeight: "500",
