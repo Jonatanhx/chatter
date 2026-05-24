@@ -6,10 +6,13 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { getIronSession } from "iron-session";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { sessionOptions } from "~/lib/session";
+import type { SessionData } from "~/schemas/authSchemas";
 
 import { db } from "~/server/db";
 
@@ -24,6 +27,7 @@ import { db } from "~/server/db";
 type CreateContextOptions = {
   req: CreateNextContextOptions["req"];
   res: CreateNextContextOptions["res"];
+  session: Awaited<ReturnType<typeof getIronSession<SessionData>>>;
 };
 
 /**
@@ -41,6 +45,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     db,
     req: opts.req,
     res: opts.res,
+    session: opts.session,
   };
 };
 
@@ -50,8 +55,13 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({ req: opts.req, res: opts.res });
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+  const session = await getIronSession<SessionData>(
+    opts.req,
+    opts.res,
+    sessionOptions,
+  );
+  return createInnerTRPCContext({ req: opts.req, res: opts.res, session });
 };
 
 /**
@@ -128,3 +138,12 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure.use(timingMiddleware);
+
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({ ctx });
+  });

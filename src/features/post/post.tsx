@@ -25,7 +25,7 @@ import { api, type RouterOutputs } from "~/utils/api";
 import { formatCreatedAtDate } from "~/utils/helpers";
 import classes from "./post.module.css";
 
-type Post = NonNullable<RouterOutputs["post"]["getLatest"]>;
+type Post = NonNullable<RouterOutputs["post"]["getAll"]>[number];
 
 export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -34,12 +34,82 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
   const { data: session } = api.auth.getSession.useQuery();
   if (!session) return null;
   const { data: author } = api.user.getUserById.useQuery({ id: post.userId });
+  const hasRetweeted = post.retweets.some((r) => r.userId === session.id);
+  const hasLiked = post.likes.some((r) => r.userId === session.id);
   const deletePost = api.post.delete.useMutation({
     onSuccess: () => void utils.post.getAll.invalidate(),
   });
 
+  const retweetPost = api.retweet.toggle.useMutation({
+    onMutate: async ({ postId }) => {
+      await utils.post.getAll.cancel();
+
+      const previous = utils.post.getAll.getData();
+
+      utils.post.getAll.setData(undefined, (old) =>
+        old?.map((p) =>
+          p.id !== postId
+            ? p
+            : {
+                ...p,
+                retweetCount: hasRetweeted
+                  ? p.retweetCount - 1
+                  : p.retweetCount + 1,
+                retweets: hasRetweeted
+                  ? p.retweets.filter((r) => r.userId !== session.id)
+                  : [...p.retweets, { userId: session.id }],
+              },
+        ),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _input, context) => {
+      utils.post.getAll.setData(undefined, context?.previous);
+    },
+    onSettled: () => {
+      void utils.post.getAll.invalidate();
+    },
+  });
+
+  const likePost = api.like.toggle.useMutation({
+    onMutate: async ({ postId }) => {
+      await utils.post.getAll.cancel();
+
+      const previous = utils.post.getAll.getData();
+
+      utils.post.getAll.setData(undefined, (old) =>
+        old?.map((p) =>
+          p.id !== postId
+            ? p
+            : {
+                ...p,
+                likeCount: hasLiked ? p.likeCount - 1 : p.likeCount + 1,
+                likes: hasLiked
+                  ? p.likes.filter((r) => r.userId !== session.id)
+                  : [...p.likes, { userId: session.id }],
+              },
+        ),
+      );
+
+      return { previous };
+    },
+    onError: (_err, _input, context) => {
+      utils.post.getAll.setData(undefined, context?.previous);
+    },
+    onSettled: () => {
+      void utils.post.getAll.invalidate();
+    },
+  });
+
   function handleDeletePost() {
     deletePost.mutate({ postId: post.id });
+  }
+  function handleRetweetPost() {
+    retweetPost.mutate({ postId: post.id });
+  }
+  function handleLikePost() {
+    likePost.mutate({ postId: post.id });
   }
 
   if (!author) return null;
@@ -50,7 +120,7 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
       gap={0}
       data-clickable={!!onClick}
     >
-      <Group justify="space-between" p={20}>
+      <Group justify="space-between" p="lg">
         <Group>
           <Avatar src={author.image}></Avatar>
           <Text>{author.name ? author.name : author.email}</Text>
@@ -79,7 +149,7 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
         </Menu>
       </Group>
       <Group
-        p={20}
+        p="lg"
         align="start"
         styles={{ root: { flexDirection: "column" } }}
       >
@@ -91,8 +161,24 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
       <Divider />
       <Group p={10}>
         <IconButton onClick={open} icon={faComment} />
-        <IconButton icon={faRetweet} />
-        <IconButton icon={faHeart} />
+        <Group gap={0}>
+          <IconButton
+            icon={faRetweet}
+            onClick={handleRetweetPost}
+            style={{ color: hasRetweeted ? "green" : undefined }}
+          />
+          <Text size="sm" style={{ color: hasRetweeted ? "green" : undefined }}>
+            {post.retweetCount}
+          </Text>
+        </Group>
+        <Group gap={0}>
+          <IconButton
+            icon={faHeart}
+            c={hasLiked ? "red" : undefined}
+            onClick={handleLikePost}
+          />
+          <Text c={hasLiked ? "red" : undefined}>{post.likeCount}</Text>
+        </Group>
       </Group>
       <Modal
         size="lg"

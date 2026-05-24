@@ -29,10 +29,17 @@ export const postRouter = createTRPCRouter({
     }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.db.post.findMany({
+    return ctx.db.post.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        retweets: {
+          select: { userId: true },
+        },
+        likes: {
+          select: { userId: true },
+        },
+      },
     });
-    return posts ?? null;
   }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
@@ -47,6 +54,14 @@ export const postRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const post = await ctx.db.post.findFirst({
         where: { id: input.id },
+        include: {
+          retweets: {
+            select: { userId: true },
+          },
+          likes: {
+            select: { userId: true },
+          },
+        },
       });
       return post ?? null;
     }),

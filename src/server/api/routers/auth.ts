@@ -12,36 +12,23 @@ export const authRouter = createTRPCRouter({
       const user = await ctx.db.user.findUnique({
         where: { email: input.email },
       });
-      if (!user) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
 
-      if (!(await argon2.verify(user.password, input.password))) {
+      if (!user || !(await argon2.verify(user.password, input.password))) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Incorrect email or password",
         });
       }
 
-      const session = await getIronSession<SessionData>(
-        ctx.req,
-        ctx.res,
-        sessionOptions,
-      );
+      ctx.session.user = user;
 
-      session.user = user;
-      await session.save();
-
-      return user;
+      await ctx.session.save();
     }),
+
   signOut: publicProcedure.mutation(async ({ ctx }) => {
-    const session = await getIronSession<SessionData>(
-      ctx.req,
-      ctx.res,
-      sessionOptions,
-    );
-    session.destroy();
+    ctx.session.destroy();
   }),
+
   getSession: publicProcedure.query(async ({ ctx }) => {
     const session = await getIronSession<SessionData>(
       ctx.req,
