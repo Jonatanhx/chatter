@@ -5,7 +5,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Menu } from "@mantine/core";
+import { Avatar, Menu, Text } from "@mantine/core";
 import { IconButton } from "~/components/iconButton";
 import { api } from "~/utils/api";
 import classes from "./profileMenu.module.css";
@@ -28,7 +28,7 @@ export function ProfileMenu() {
         alt={`${session.name}'s profile picture`}
       />
 
-      {session.name ? session.name : session.email}
+      <Text>{session.name ? session.name : session.email}</Text>
       <Menu>
         <Menu.Dropdown>
           <Menu.Item leftSection={<FontAwesomeIcon icon={faUser} />}>
@@ -46,7 +46,7 @@ export function ProfileMenu() {
           </Menu.Item>
         </Menu.Dropdown>
         <Menu.Target>
-          <IconButton icon={faEllipsis} />
+          <IconButton ml="auto" icon={faEllipsis} />
         </Menu.Target>
       </Menu>
     </div>

@@ -6,13 +6,12 @@ import type { SessionData } from "~/schemas/authSchemas";
 import type { User } from "../../../../generated/prisma";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
-export const registerUserSchema: z.ZodType<
-  Pick<User, "email" | "name" | "password">
-> = z.object({
-  email: z.string(),
-  name: z.string(),
-  password: z.string(),
-});
+const registerUserSchema: z.ZodType<Pick<User, "email" | "name" | "password">> =
+  z.object({
+    email: z.string(),
+    name: z.string(),
+    password: z.string(),
+  });
 
 export const userRouter = createTRPCRouter({
   registerUser: publicProcedure

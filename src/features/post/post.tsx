@@ -2,40 +2,34 @@ import {
   faComment,
   faEllipsis,
   faHeart,
+  faPen,
   faRetweet,
   faShare,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Avatar,
-  Button,
-  Divider,
-  Group,
-  Menu,
-  Modal,
-  Stack,
-  Text,
-  Textarea,
-} from "@mantine/core";
+import { Avatar, Divider, Group, Menu, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
 import { IconButton } from "~/components/iconButton";
 import { api, type RouterOutputs } from "~/utils/api";
 import { formatCreatedAtDate } from "~/utils/helpers";
+import { CreateCommentModal } from "../comment/createCommentModal";
 import classes from "./post.module.css";
 
 type Post = NonNullable<RouterOutputs["post"]["getAll"]>[number];
 
 export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const utils = api.useUtils();
 
+  const utils = api.useUtils();
   const { data: session } = api.auth.getSession.useQuery();
   if (!session) return null;
+
   const { data: author } = api.user.getUserById.useQuery({ id: post.userId });
   const hasRetweeted = post.retweets.some((r) => r.userId === session.id);
   const hasLiked = post.likes.some((r) => r.userId === session.id);
+
   const deletePost = api.post.delete.useMutation({
     onSuccess: () => void utils.post.getAll.invalidate(),
   });
@@ -136,14 +130,21 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
             >
               Share post
             </Menu.Item>
-            {post.userId === session.id && <Menu.Divider />}
             {post.userId === session.id && (
-              <Menu.Item
-                onClick={handleDeletePost}
-                leftSection={<FontAwesomeIcon icon={faTrashCan} size="sm" />}
-              >
-                Delete post
-              </Menu.Item>
+              <>
+                <Menu.Divider />
+                <Menu.Item
+                  leftSection={<FontAwesomeIcon icon={faPen} size="sm" />}
+                >
+                  Edit post
+                </Menu.Item>
+                <Menu.Item
+                  onClick={handleDeletePost}
+                  leftSection={<FontAwesomeIcon icon={faTrashCan} size="sm" />}
+                >
+                  Delete post
+                </Menu.Item>
+              </>
             )}
           </Menu.Dropdown>
         </Menu>
@@ -160,14 +161,20 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
       </Group>
       <Divider />
       <Group p={10}>
-        <IconButton onClick={open} icon={faComment} />
+        <Group gap={0}>
+          <IconButton onClick={open} icon={faComment} />
+          <Text size="sm">{post.commentCount}</Text>
+        </Group>
         <Group gap={0}>
           <IconButton
             icon={faRetweet}
             onClick={handleRetweetPost}
-            style={{ color: hasRetweeted ? "green" : undefined }}
+            style={{ color: hasRetweeted ? "seaGreen" : undefined }}
           />
-          <Text size="sm" style={{ color: hasRetweeted ? "green" : undefined }}>
+          <Text
+            size="sm"
+            style={{ color: hasRetweeted ? "seaGreen" : undefined }}
+          >
             {post.retweetCount}
           </Text>
         </Group>
@@ -177,45 +184,18 @@ export function Post({ post, onClick }: { post: Post; onClick?: () => void }) {
             c={hasLiked ? "red" : undefined}
             onClick={handleLikePost}
           />
-          <Text c={hasLiked ? "red" : undefined}>{post.likeCount}</Text>
+          <Text size="sm" c={hasLiked ? "red" : undefined}>
+            {post.likeCount}
+          </Text>
         </Group>
       </Group>
-      <Modal
-        size="lg"
-        onClick={(e) => e.stopPropagation()}
+      <CreateCommentModal
+        session={session}
+        post={post}
+        author={author}
         opened={opened}
-        onClose={close}
-        title="Comment"
-      >
-        <Group wrap="nowrap" align="flex-start" p="lg">
-          <Avatar src={author.image} />
-          <Stack gap={6}>
-            <Text c="neutral.1" fw={600}>
-              {author.name ? author.name : author.email}
-            </Text>
-            <Text>{post.content}</Text>
-            {post.image && (
-              <Image
-                src={post.image}
-                alt={post.content}
-                height={200}
-                width={200}
-              />
-            )}
-          </Stack>
-        </Group>
-        <Group
-          p="lg"
-          align="flex-start"
-          style={{ borderTop: "1px solid var(--mantine-color-neutral-8)" }}
-        >
-          <Avatar src={session.image} />
-          <Stack flex={1} align="flex-end">
-            <Textarea placeholder="Write your reply" size="md" w="100%" />
-            <Button>Submit</Button>
-          </Stack>
-        </Group>
-      </Modal>
+        close={close}
+      />
     </Stack>
   );
 }

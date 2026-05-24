@@ -1,16 +1,13 @@
-import { z } from "zod";
-
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createPostSchema,
+  deletePostSchema,
+  getPostByIdSchema,
+} from "~/schemas/post";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
-  create: publicProcedure
-    .input(
-      z.object({
-        content: z.string().min(1),
-        image: z.string().nullable(),
-        userId: z.string(),
-      }),
-    )
+  create: protectedProcedure
+    .input(createPostSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.create({
         data: {
@@ -20,15 +17,15 @@ export const postRouter = createTRPCRouter({
         },
       });
     }),
-  delete: publicProcedure
-    .input(z.object({ postId: z.string() }))
+  delete: protectedProcedure
+    .input(deletePostSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.post.delete({
         where: { id: input.postId },
       });
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.post.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -38,19 +35,15 @@ export const postRouter = createTRPCRouter({
         likes: {
           select: { userId: true },
         },
+        comments: {
+          select: { userId: true },
+        },
       },
     });
   }),
 
-  getLatest: publicProcedure.query(async ({ ctx }) => {
-    const post = await ctx.db.post.findFirst({
-      orderBy: { createdAt: "desc" },
-    });
-
-    return post ?? null;
-  }),
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
+  getById: protectedProcedure
+    .input(getPostByIdSchema)
     .query(async ({ ctx, input }) => {
       const post = await ctx.db.post.findFirst({
         where: { id: input.id },
